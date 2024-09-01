@@ -78,19 +78,37 @@ public class InterceptorProxySerializationTest extends AbstractUnitTest
 
         try
         {
-            AutoIntercepted.called = false;
-            auto.touch();
-            assertTrue(AutoIntercepted.called);
+            //
+            AutoIntercepted newAuto=auto;
+            newAuto.doReset();
+            newAuto.touch();
+            assertTrue(newAuto.isCalled());
+            //
+            // AutoIntercepted.called = false;
+            // auto.touch();
+            // assertTrue(AutoIntercepted.called);
 
-            final AutoIntercepted deserializeInit = AutoIntercepted.class.cast(deserialize(serialize(auto)));
-            AutoIntercepted.called = false;
+            //
+            final AutoIntercepted deserializeInit = AutoIntercepted.class.cast(deserialize(serialize(newAuto)));
+            deserializeInit.doReset();
             deserializeInit.touch();
-            assertTrue(AutoIntercepted.called);
+            assertTrue(deserializeInit.isCalled());
+            //
+            // final AutoIntercepted deserializeInit = AutoIntercepted.class.cast(deserialize(serialize(auto)));
+            // AutoIntercepted.called = false;
+            // deserializeInit.touch();
+            // assertTrue(AutoIntercepted.called);
 
+            //
             final AutoIntercepted deserializeState = AutoIntercepted.class.cast(deserialize(serialize(deserializeInit)));
-            AutoIntercepted.called = false;
+            deserializeState.doReset();
             deserializeState.touch();
-            assertTrue(AutoIntercepted.called);
+            assertTrue(deserializeState.isCalled());
+            //
+            // final AutoIntercepted deserializeState = AutoIntercepted.class.cast(deserialize(serialize(deserializeInit)));
+            // AutoIntercepted.called = false;
+            // deserializeState.touch();
+            // assertTrue(AutoIntercepted.called);
         }
         finally
         {
@@ -135,6 +153,15 @@ public class InterceptorProxySerializationTest extends AbstractUnitTest
 
             return ctx.proceed();
         }
+        //************* */
+        public boolean isCalled() {
+            return called;
+        }
+
+        public void doReset() {
+            this.called = false;
+        }
+        //*********** */
     }
 
     @IB
@@ -161,7 +188,8 @@ public class InterceptorProxySerializationTest extends AbstractUnitTest
     @IB
     public static class AutoIntercepted implements Serializable
     {
-        public static boolean called = false;
+        public boolean called = false;
+        //public static boolean called = false;
 
         @AroundInvoke
         public Object auto(final InvocationContext ic)  throws Exception {
@@ -170,5 +198,17 @@ public class InterceptorProxySerializationTest extends AbstractUnitTest
         }
 
         public void touch() {}
+
+        //******************* */
+        public boolean isCalled()
+        {
+            return called;
+        }
+
+        public void doReset() {
+            this.called = false;
+        }
+
+        //********************* */
     }
 }
