@@ -78,7 +78,7 @@ public class InterceptorProxySerializationTest extends AbstractUnitTest
 
         try
         {
-            final AutoIntercepted newAuto=new AutoIntercepted();
+            final AutoIntercepted newAuto=auto;
             newAuto.called = false;
             newAuto.touch();
             assertTrue(newAuto.called);
